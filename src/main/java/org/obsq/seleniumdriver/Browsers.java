@@ -1,11 +1,11 @@
-package org.obs.seleniumbasic;
+package org.obsq.seleniumdriver;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class BrowserDrivers {
+public class Browsers {
 
     public static void main(String[] args) {
 
@@ -25,5 +25,7 @@ public class BrowserDrivers {
 
 
     }
+
+
 
 }
