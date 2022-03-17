@@ -51,6 +51,7 @@ public class DemoTour extends Utility{
         WebElement name2=driver.findElement(By.xpath("//input[@name='lastName']"));
         WebElement phone1=driver.findElement(By.xpath("//input[@name='phone']"));
         WebElement emailid=driver.findElement(By.xpath("//input[@id='userName']"));
+
         WebElement address=driver.findElement(By.xpath("//input[@name='address1']"));
         WebElement city=driver.findElement(By.xpath("//input[@name='city']"));
         WebElement state=driver.findElement(By.xpath("//input[@name='state']"));
