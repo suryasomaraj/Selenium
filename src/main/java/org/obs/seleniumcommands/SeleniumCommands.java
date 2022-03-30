@@ -39,15 +39,13 @@ public class SeleniumCommands {
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
     }
-
     @BeforeMethod
     public void setUp(){
         testInitialize("chrome");//driver.get("http://demowebshop.tricentis.com");
     }
-
     @AfterMethod
     public void tearDown(){
-        driver.close();
+        //driver.close();
     }
    @Test
     public void verifyHomepageTitle(){
@@ -156,7 +154,11 @@ public class SeleniumCommands {
         cpassword.sendKeys("qwerty@123");
         WebElement registerbutton=driver.findElement(By.cssSelector("input[name='register-button']"));
         registerbutton.click();
-        //a[text()='suryasomaraj13@gmail.com']
+        WebElement loginLink=driver.findElement(By.cssSelector("div[class='header-links']>ul>li>a[class='account']"));
+        String actualId=loginLink.getText();
+        System.out.println(actualId);
+        String expectedId=mail;
+        Assert.assertEquals(actualId,expectedId,"Registration fails");
     }
     public void selectGender(String gender){
         List<WebElement> radio=driver.findElements(By.xpath("//label[@class='forcheckbox']"));
@@ -289,5 +291,119 @@ public class SeleniumCommands {
         }
         driver.switchTo().window(parentWindow);
     }
+    @Test
+    public void verifyFramesInSelenium(){
+        driver.get("https://demoqa.com/frames");
+        //driver.switchTo().frame(3);
+        //driver.switchTo().frame("frame1");
+        WebElement frameElement=driver.findElement(By.id("frame1"));
+        driver.switchTo().frame(frameElement);
+        WebElement sample1= driver.findElement(By.id("sampleHeading"));
+        String sampleText= sample1.getText();
+        System.out.println("Sample1 Text= "+sampleText);
+    }
+    @Test
+    public void verifySelectedColor(){
+        driver.get("https://selenium.obsqurazone.com/select-input.php");
+        selectColor("Red");
+        WebElement selectedColor=driver.findElement(By.xpath("//div[@id='message-one']"));
+        String actualColorSelected=selectedColor.getText();
+        String expectedColorSelected="Selected Color : Red";
+        Assert.assertEquals(actualColorSelected,expectedColorSelected,"Color is not Selected");
+    }
+    public void selectColor(String color){
+        WebElement options=driver.findElement(By.xpath("//select[@id='single-input-field']"));
+        Select select=new Select(options);
+        List<WebElement> dropDown=select.getOptions();
+        System.out.println(dropDown.size());
+        for(int i=0;i<dropDown.size();i++){
+            if(dropDown.get(i).getText().equalsIgnoreCase(color)){
+                dropDown.get(i).click();
+            }
+        }
+    }
+    @Test
+    public void multiSelectedColors(){
+        driver.get("https://selenium.obsqurazone.com/select-input.php");
+        selectMultipleColor("Red","Green");
+        WebElement getAllSelected = driver.findElement(By.xpath("//button[@id='button-all']"));
+        getAllSelected.click();
+        WebElement allSelectedColor=driver.findElement(By.xpath("//div[@id='message-two']"));
+        String actualAllSelectedColor=allSelectedColor.getText();
+        String expectedAllSelectedColor="All selected colors are : Red,Green";
+        //Assert.assertEquals(actualAllSelectedColor,expectedAllSelectedColor,"Colors not selected");
+    }
+    public void selectMultipleColor(String color1,String color2){
+        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select=new Select(selectColor);
+        List<WebElement>option=select.getOptions();
+        for(int i=0;i<option.size();i++) {
+            if(option.get(i).getText().equals(color1)){
+                select.selectByVisibleText(color1);
+            }else if(option.get(i).getText().equals(color2)){
+                select.selectByVisibleText(color2);
+            }}
+          List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
+       for (int x=0;x<allSelectedOptions.size();x++) {
+            System.out.println("all selected= "+allSelectedOptions.get(x).getText());
+           WebElement getFirstSelected=select.getFirstSelectedOption();
+           getFirstSelected.click();
+            allSelectedOptions.get(x).click();
+            }
+    }
+    @Test
+    public void verifyFirstSelectedColor(){
+        driver.get("https://selenium.obsqurazone.com/select-input.php");
+        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select=new Select(selectColor);
+            select.selectByIndex(0);
+            select.selectByIndex(1);
+            select.selectByIndex(2);
+        WebElement getFirstSelected=select.getFirstSelectedOption();
+        getFirstSelected.click();
+        WebElement getFirstSelect=driver.findElement(By.xpath("//button[@id='button-first']"));
+        getFirstSelect.click();
+        WebElement firstSelectedColor=driver.findElement(By.xpath("//div[@id='message-two']"));
+        System.out.println(firstSelectedColor.getText());
+       String actualFirstSelected=firstSelectedColor.getText();
+       String expectedFirstSelected="First selected color is : Red";
+       Assert.assertEquals(actualFirstSelected,expectedFirstSelected,"First Selection is not done");
+    }
+    @Test
+    public void getDeselected() throws InterruptedException {
+        driver.get("https://selenium.obsqurazone.com/select-input.php");
+        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select=new Select(selectColor);
+        select.selectByIndex(0);
+        select.selectByIndex(1);
+        select.selectByIndex(2);
+        Thread.sleep(3000);
+        select.deselectByIndex(0);
+        select.deselectByValue("Yellow");
+        select.deselectByVisibleText("Green");
+        //select.deselectAll();
+    }
+    @Test
+    public void verifyColorOptions(){
+        driver.get("https://selenium.obsqurazone.com/select-input.php");
+        colorOption("Red","Yellow","Green");
+        }
+    public void colorOption(String color1,String color2,String color3){
+        WebElement colorOptions=driver.findElement(By.xpath("//select[@id='single-input-field']"));
+        Select select=new Select(colorOptions);
+        List <WebElement> colorList=select.getOptions();
+        for(int i=0;i<colorList.size();i++) {
+            if (colorList.get(i).getText().equals(color1)) {
+                System.out.println("Red");
+            } else if (colorList.get(i).getText().equals(color2)) {
+                System.out.println("Yellow");
+            } else if (colorList.get(i).getText().equals(color3)) {
+                System.out.println("Green");
+            }else{
+                System.out.println("invalid");
+            }
+        }
+    }
+
 }
 
