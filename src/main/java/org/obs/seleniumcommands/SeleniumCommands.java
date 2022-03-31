@@ -5,6 +5,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -12,16 +13,16 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.swing.*;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
+import java.util.*;
 
 public class SeleniumCommands {
     WebDriver driver;
+
     public void testInitialize(String browser) {
         if (browser.equals("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "C:\\ChromeDriver\\chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver", "C:\\Users\\Lenovo\\Downloads\\chromedriver_win32 (2)\\chromedriver.exe");
             driver = new ChromeDriver();
         } else if (browser.equals("firefox")) {
             System.setProperty("webdriver.gecko.driver", "C:\\Selenium_files\\geckodriver-v0.30.0-win64\\geckodriver.exe");
@@ -39,232 +40,250 @@ public class SeleniumCommands {
         driver.manage().deleteAllCookies();
         driver.manage().window().maximize();
     }
+
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         testInitialize("chrome");//driver.get("http://demowebshop.tricentis.com");
     }
+
     @AfterMethod
-    public void tearDown(){
+    public void tearDown() {
         //driver.close();
     }
-   @Test
-    public void verifyHomepageTitle(){
-        driver.get("http://demowebshop.tricentis.com");
-        String actualTitle= driver.getTitle();
-        String expectedTitle="Demo Web Shop";
-        Assert.assertEquals(actualTitle,expectedTitle,"invalid Page Title");
-    }
+
     @Test
-    public void verifyLogin(){
+    public void verifyHomepageTitle() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("li>a.ico-login"));
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "Demo Web Shop";
+        Assert.assertEquals(actualTitle, expectedTitle, "invalid Page Title");
+    }
+
+    @Test
+    public void verifyLogin() {
+        driver.get("http://demowebshop.tricentis.com");
+        WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement email=driver.findElement(By.cssSelector("input#Email"));
+        WebElement email = driver.findElement(By.cssSelector("input#Email"));
         email.sendKeys("suryasomaraj94@gmail.com");
-        WebElement password=driver.findElement(By.cssSelector("input.password"));
+        WebElement password = driver.findElement(By.cssSelector("input.password"));
         password.sendKeys("qwerty@123");
-        WebElement checkbox=driver.findElement(By.cssSelector("input[type='checkbox']"));
+        WebElement checkbox = driver.findElement(By.cssSelector("input[type='checkbox']"));
         checkbox.click();
-        WebElement submit=driver.findElement(By.cssSelector("input[value='Log in']"));
+        WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
         submit.click();
-        WebElement account= driver.findElement(By.xpath("//div[@class='header-links']//a[@class='account']"));
-        String actualemailID=account.getText();
-        String expectedemailID="suryasomaraj94@gmail.com";
-        Assert.assertEquals(actualemailID,expectedemailID,"User login Failed");
+        WebElement account = driver.findElement(By.xpath("//div[@class='header-links']//a[@class='account']"));
+        String actualemailID = account.getText();
+        String expectedemailID = "suryasomaraj94@gmail.com";
+        Assert.assertEquals(actualemailID, expectedemailID, "User login Failed");
     }
+
     @Test
-    public void verifyClear(){
+    public void verifyClear() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("a.ico-login"));
+        WebElement login = driver.findElement(By.cssSelector("a.ico-login"));
         login.click();
-        WebElement email=driver.findElement(By.cssSelector("input#Email"));
+        WebElement email = driver.findElement(By.cssSelector("input#Email"));
         email.sendKeys("suryasomaraj94@gmail.com");
-        WebElement password=driver.findElement(By.cssSelector("input.password"));
+        WebElement password = driver.findElement(By.cssSelector("input.password"));
         password.sendKeys("qwerty@123");
         email.clear();
-        WebElement submit=driver.findElement(By.cssSelector("input[value='Log in']"));
+        WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
         submit.click();
-        WebElement clear=driver.findElement(By.xpath("//div[@class='validation-summary-errors']/child::span"));
-        String actualemail=clear.getText();
-        String expectedemail="Login was unsuccessful. Please correct the errors and try again.";
-        Assert.assertEquals(actualemail,expectedemail,"Invalid Error Message");
+        WebElement clear = driver.findElement(By.xpath("//div[@class='validation-summary-errors']/child::span"));
+        String actualemail = clear.getText();
+        String expectedemail = "Login was unsuccessful. Please correct the errors and try again.";
+        Assert.assertEquals(actualemail, expectedemail, "Invalid Error Message");
     }
+
     @Test
-    public void verifyWebelementCommands(){
+    public void verifyWebelementCommands() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("li>a.ico-login"));
+        WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement submit=driver.findElement(By.cssSelector("input[value='Log in']"));
-        Dimension dimension =submit.getSize();
-        int height=dimension.height;
-        int width=dimension.width;
-        System.out.println("height=" +height);
-        System.out.println("width= "+width);
-        Point point=submit.getLocation();
-        int x=point.x;
-        int y=point.y;
-        System.out.println("X-coordinate= "+x);
-        System.out.println("Y-coordinate= "+y);
-        String actualloginbuttontext=submit.getAttribute("value");
-        System.out.println("actual login button text= "+actualloginbuttontext);
-        String expectedloginbuttontext="Log in";
-       // Assert.assertEquals(actualloginbuttontext,expectedloginbuttontext,"incorrect text in login button");
-        String tagname=submit.getTagName();
-        System.out.println("Tagname= "+tagname);
-        String cssproperty=submit.getCssValue("color");
-        System.out.println("cssproperty= "+cssproperty);
+        WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
+        Dimension dimension = submit.getSize();
+        int height = dimension.height;
+        int width = dimension.width;
+        System.out.println("height=" + height);
+        System.out.println("width= " + width);
+        Point point = submit.getLocation();
+        int x = point.x;
+        int y = point.y;
+        System.out.println("X-coordinate= " + x);
+        System.out.println("Y-coordinate= " + y);
+        String actualloginbuttontext = submit.getAttribute("value");
+        System.out.println("actual login button text= " + actualloginbuttontext);
+        String expectedloginbuttontext = "Log in";
+        // Assert.assertEquals(actualloginbuttontext,expectedloginbuttontext,"incorrect text in login button");
+        String tagname = submit.getTagName();
+        System.out.println("Tagname= " + tagname);
+        String cssproperty = submit.getCssValue("color");
+        System.out.println("cssproperty= " + cssproperty);
     }
+
     @Test
-    public void searchButton(){
+    public void searchButton() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement search=driver.findElement(By.cssSelector("input[value='Search']"));
-        Dimension dimension =search.getSize();
-        int height=dimension.height;
-        int width=dimension.width;
-        System.out.println("height=" +height);
-        System.out.println("width= "+width);
-        Point point=search.getLocation();
-        int x=point.x;
-        int y=point.y;
-        System.out.println("X-coordinate= "+x);
-        System.out.println("Y-coordinate= "+y);
-        String actualsearchbuttontext=search.getAttribute("value");
-        System.out.println("actual Search button text= "+actualsearchbuttontext);
-        String expectedsearchbuttontext="Search";
-        Assert.assertEquals(actualsearchbuttontext,expectedsearchbuttontext,"incorrect text in search button");
+        WebElement search = driver.findElement(By.cssSelector("input[value='Search']"));
+        Dimension dimension = search.getSize();
+        int height = dimension.height;
+        int width = dimension.width;
+        System.out.println("height=" + height);
+        System.out.println("width= " + width);
+        Point point = search.getLocation();
+        int x = point.x;
+        int y = point.y;
+        System.out.println("X-coordinate= " + x);
+        System.out.println("Y-coordinate= " + y);
+        String actualsearchbuttontext = search.getAttribute("value");
+        System.out.println("actual Search button text= " + actualsearchbuttontext);
+        String expectedsearchbuttontext = "Search";
+        Assert.assertEquals(actualsearchbuttontext, expectedsearchbuttontext, "incorrect text in search button");
     }
+
     @Test
     public void verifyRegistration() throws InterruptedException {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement register=driver.findElement(By.cssSelector("a.ico-register"));
+        WebElement register = driver.findElement(By.cssSelector("a.ico-register"));
         register.click();
         selectGender("Female");
         Thread.sleep(5000);
-        WebElement name=driver.findElement(By.cssSelector("input[name='FirstName']"));
+        WebElement name = driver.findElement(By.cssSelector("input[name='FirstName']"));
         name.sendKeys("surya");
-        WebElement namel=driver.findElement(By.cssSelector("input#LastName"));
+        WebElement namel = driver.findElement(By.cssSelector("input#LastName"));
         namel.sendKeys("somaraj");
-        Utility utility=new Utility();
-        String mail=Utility.random();
-        WebElement email=driver.findElement(By.cssSelector("input#Email"));
+        Utility utility = new Utility();
+        String mail = Utility.random();
+        WebElement email = driver.findElement(By.cssSelector("input#Email"));
         email.sendKeys(mail);
-        WebElement password=driver.findElement(By.cssSelector("input[name='Password']"));
+        WebElement password = driver.findElement(By.cssSelector("input[name='Password']"));
         password.sendKeys("qwerty@123");
-        WebElement cpassword=driver.findElement(By.cssSelector("div>input#ConfirmPassword"));
+        WebElement cpassword = driver.findElement(By.cssSelector("div>input#ConfirmPassword"));
         cpassword.sendKeys("qwerty@123");
-        WebElement registerbutton=driver.findElement(By.cssSelector("input[name='register-button']"));
+        WebElement registerbutton = driver.findElement(By.cssSelector("input[name='register-button']"));
         registerbutton.click();
-        WebElement loginLink=driver.findElement(By.cssSelector("div[class='header-links']>ul>li>a[class='account']"));
-        String actualId=loginLink.getText();
+        WebElement loginLink = driver.findElement(By.cssSelector("div[class='header-links']>ul>li>a[class='account']"));
+        String actualId = loginLink.getText();
         System.out.println(actualId);
-        String expectedId=mail;
-        Assert.assertEquals(actualId,expectedId,"Registration fails");
+        String expectedId = mail;
+        Assert.assertEquals(actualId, expectedId, "Registration fails");
     }
-    public void selectGender(String gender){
-        List<WebElement> radio=driver.findElements(By.xpath("//label[@class='forcheckbox']"));
-        for(int i=0;i< radio.size();i++){
-            if(radio.get(i).getText().equals(gender)) {
+
+    public void selectGender(String gender) {
+        List<WebElement> radio = driver.findElements(By.xpath("//label[@class='forcheckbox']"));
+        for (int i = 0; i < radio.size(); i++) {
+            if (radio.get(i).getText().equals(gender)) {
                 radio.get(i).click();
-            }else{
+            } else {
                 System.out.println("Invalid");
             }
         }
     }
+
     @Test
-    public void verifyElementPresent(){
+    public void verifyElementPresent() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("li>a.ico-login"));
+        WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement submit=driver.findElement(By.cssSelector("input[value='Log in']"));
-        boolean result=submit.isDisplayed();
-        System.out.println("Result="+result);
-        Assert.assertTrue(result,"Submit button not displayed");
+        WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
+        boolean result = submit.isDisplayed();
+        System.out.println("Result=" + result);
+        Assert.assertTrue(result, "Submit button not displayed");
     }
+
     @Test
-    public void verifyElementEnabled(){
+    public void verifyElementEnabled() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("li>a.ico-login"));
+        WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement submit=driver.findElement(By.cssSelector("input[value='Log in']"));
-        boolean enabledStatus=submit.isEnabled();
-        System.out.println("enabledStatus= "+enabledStatus);
-        Assert.assertTrue(enabledStatus,"Submit button is not enabled");
+        WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
+        boolean enabledStatus = submit.isEnabled();
+        System.out.println("enabledStatus= " + enabledStatus);
+        Assert.assertTrue(enabledStatus, "Submit button is not enabled");
     }
+
     @Test
-    public void verifyCheckBoxSelectionStatus(){
+    public void verifyCheckBoxSelectionStatus() {
         driver.get("http://demowebshop.tricentis.com");
-        WebElement login=driver.findElement(By.cssSelector("li>a.ico-login"));
+        WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement checkbox=driver.findElement(By.cssSelector("input[type='checkbox']"));
-        boolean selectionStatusBeforeClick=checkbox.isSelected();
+        WebElement checkbox = driver.findElement(By.cssSelector("input[type='checkbox']"));
+        boolean selectionStatusBeforeClick = checkbox.isSelected();
         System.out.println(selectionStatusBeforeClick);
-        Assert.assertFalse(selectionStatusBeforeClick,"Checkbox selection is not expected");
+        Assert.assertFalse(selectionStatusBeforeClick, "Checkbox selection is not expected");
         checkbox.click();
-        boolean selectionStatus=checkbox.isSelected();
-        System.out.println("SelectionStatus= "+selectionStatus);
-        Assert.assertTrue(selectionStatus,"Checkbox is not selected");
+        boolean selectionStatus = checkbox.isSelected();
+        System.out.println("SelectionStatus= " + selectionStatus);
+        Assert.assertTrue(selectionStatus, "Checkbox is not selected");
     }
+
     @Test
-    public void verifyPromptAlert(){
+    public void verifyPromptAlert() {
         driver.get("https://demoqa.com/alerts");
-        WebElement prompt=driver.findElement(By.cssSelector("button#promtButton"));
+        WebElement prompt = driver.findElement(By.cssSelector("button#promtButton"));
         prompt.click();
-        Alert alert=driver.switchTo().alert();
-        String alertString=alert.getText();
+        Alert alert = driver.switchTo().alert();
+        String alertString = alert.getText();
         System.out.println(alertString);
         alert.sendKeys("surya");
         alert.accept();
         //alert.dismiss();
     }
+
     @Test
-    public void verifyDropDown(){
+    public void verifyDropDown() {
         driver.get("https://demo.guru99.com/test/newtours/");
-        List<WebElement> registerLink=driver.findElements(By.xpath("//td[@class='mouseOut']/child::a"));
-        for(int i=0;i< registerLink.size();i++) {
+        List<WebElement> registerLink = driver.findElements(By.xpath("//td[@class='mouseOut']/child::a"));
+        for (int i = 0; i < registerLink.size(); i++) {
             if (registerLink.get(i).getText().equals("REGISTER")) {
                 registerLink.get(i).click();
                 break;
             }
         }
-        WebElement dropdown=driver.findElement(By.xpath("//select[@name='country']"));
-        Select select=new Select(dropdown);
+        WebElement dropdown = driver.findElement(By.xpath("//select[@name='country']"));
+        Select select = new Select(dropdown);
         //select.selectByVisibleText("INDIA");
         select.selectByValue("INDIA");
         select.selectByIndex(20);
-       List<WebElement> dropdownValues=select.getOptions();
+        List<WebElement> dropdownValues = select.getOptions();
         System.out.println(dropdownValues.size());
-        for (int i=0;i<dropdownValues.size();i++) {
+        for (int i = 0; i < dropdownValues.size(); i++) {
             System.out.println(dropdownValues.get(i).getText());
         }
     }
+
     @Test
-    public void verifySimpleAlert(){
+    public void verifySimpleAlert() {
         driver.get("https://demoqa.com/alerts");
-        WebElement simpleAlert=driver.findElement(By.cssSelector("button#alertButton"));
+        WebElement simpleAlert = driver.findElement(By.cssSelector("button#alertButton"));
         simpleAlert.click();
-        Alert alert=driver.switchTo().alert();
+        Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
-    public void verifyConfirmationAlert(){
+    public void verifyConfirmationAlert() {
         driver.get("https://demoqa.com/alerts");
-        WebElement confirmationAlert=driver.findElement(By.cssSelector("button#confirmButton"));
+        WebElement confirmationAlert = driver.findElement(By.cssSelector("button#confirmButton"));
         confirmationAlert.click();
-        Alert alert=driver.switchTo().alert();
+        Alert alert = driver.switchTo().alert();
         //alert.accept();
         alert.dismiss();
     }
+
     @Test
-    public void verifyDeleteCustomer(){
+    public void verifyDeleteCustomer() {
         driver.get("https://demo.guru99.com/test/delete_customer.php");
-        WebElement customerTextBox=driver.findElement(By.cssSelector("td>input[name='cusid']"));
+        WebElement customerTextBox = driver.findElement(By.cssSelector("td>input[name='cusid']"));
         customerTextBox.sendKeys("Surya");
-        WebElement submitButton=driver.findElement(By.xpath("//input[@name='submit']"));
+        WebElement submitButton = driver.findElement(By.xpath("//input[@name='submit']"));
         submitButton.click();
-        Alert alert=driver.switchTo().alert();
+        Alert alert = driver.switchTo().alert();
         alert.accept();
         alert.accept();
     }
+
     @Test
     public void verifyMultipleWindows() {
         driver.get("https://demo.guru99.com/popup.php");
@@ -291,119 +310,197 @@ public class SeleniumCommands {
         }
         driver.switchTo().window(parentWindow);
     }
+
     @Test
-    public void verifyFramesInSelenium(){
+    public void verifyFramesInSelenium() {
         driver.get("https://demoqa.com/frames");
         //driver.switchTo().frame(3);
         //driver.switchTo().frame("frame1");
-        WebElement frameElement=driver.findElement(By.id("frame1"));
+        WebElement frameElement = driver.findElement(By.id("frame1"));
         driver.switchTo().frame(frameElement);
-        WebElement sample1= driver.findElement(By.id("sampleHeading"));
-        String sampleText= sample1.getText();
-        System.out.println("Sample1 Text= "+sampleText);
+        WebElement sample1 = driver.findElement(By.id("sampleHeading"));
+        String sampleText = sample1.getText();
+        System.out.println("Sample1 Text= " + sampleText);
     }
+
     @Test
-    public void verifySelectedColor(){
+    public void verifySelectedColor() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
         selectColor("Red");
-        WebElement selectedColor=driver.findElement(By.xpath("//div[@id='message-one']"));
-        String actualColorSelected=selectedColor.getText();
-        String expectedColorSelected="Selected Color : Red";
-        Assert.assertEquals(actualColorSelected,expectedColorSelected,"Color is not Selected");
+        WebElement selectedColor = driver.findElement(By.xpath("//div[@id='message-one']"));
+        String actualColorSelected = selectedColor.getText();
+        String expectedColorSelected = "Selected Color : Red";
+        Assert.assertEquals(actualColorSelected, expectedColorSelected, "Color is not Selected");
     }
-    public void selectColor(String color){
-        WebElement options=driver.findElement(By.xpath("//select[@id='single-input-field']"));
-        Select select=new Select(options);
-        List<WebElement> dropDown=select.getOptions();
+    public void selectColor(String color) {
+        WebElement options = driver.findElement(By.xpath("//select[@id='single-input-field']"));
+        Select select = new Select(options);
+        List<WebElement> dropDown = select.getOptions();
         System.out.println(dropDown.size());
-        for(int i=0;i<dropDown.size();i++){
-            if(dropDown.get(i).getText().equalsIgnoreCase(color)){
+        for (int i = 0; i < dropDown.size(); i++) {
+            if (dropDown.get(i).getText().equalsIgnoreCase(color)) {
                 dropDown.get(i).click();
             }
         }
     }
     @Test
-    public void multiSelectedColors(){
+    public void multiSelectedColors() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
-        selectMultipleColor("Red","Green");
+        selectMultipleColor("Red", "Green");
         WebElement getAllSelected = driver.findElement(By.xpath("//button[@id='button-all']"));
         getAllSelected.click();
-        WebElement allSelectedColor=driver.findElement(By.xpath("//div[@id='message-two']"));
-        String actualAllSelectedColor=allSelectedColor.getText();
-        String expectedAllSelectedColor="All selected colors are : Red,Green";
+        WebElement allSelectedColor = driver.findElement(By.xpath("//div[@id='message-two']"));
+        String actualAllSelectedColor = allSelectedColor.getText();
+        String expectedAllSelectedColor = "All selected colors are : Red,Green";
         //Assert.assertEquals(actualAllSelectedColor,expectedAllSelectedColor,"Colors not selected");
     }
-    public void selectMultipleColor(String color1,String color2){
-        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
-        Select select=new Select(selectColor);
-        List<WebElement>option=select.getOptions();
-        for(int i=0;i<option.size();i++) {
-            if(option.get(i).getText().equals(color1)){
+    public void selectMultipleColor(String color1, String color2) {
+        WebElement selectColor = driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select = new Select(selectColor);
+        List<WebElement> option = select.getOptions();
+        for (int i = 0; i < option.size(); i++) {
+            if (option.get(i).getText().equals(color1)) {
                 select.selectByVisibleText(color1);
-            }else if(option.get(i).getText().equals(color2)){
+                Actions action=new Actions(driver);
+                action.clickAndHold();
+            } else if (option.get(i).getText().equals(color2)) {
                 select.selectByVisibleText(color2);
-            }}
-          List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
-       for (int x=0;x<allSelectedOptions.size();x++) {
-            System.out.println("all selected= "+allSelectedOptions.get(x).getText());
-           WebElement getFirstSelected=select.getFirstSelectedOption();
-           getFirstSelected.click();
-            allSelectedOptions.get(x).click();
             }
+        }
+        List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
+        for (int x = 0; x < allSelectedOptions.size(); x++) {
+            System.out.println("all selected= " + allSelectedOptions.get(x).getText());
+            WebElement getFirstSelected = select.getFirstSelectedOption();
+            getFirstSelected.click();
+            allSelectedOptions.get(x).click();
+        }
     }
     @Test
-    public void verifyFirstSelectedColor(){
+    public void verifyFirstSelectedColor() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
-        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
-        Select select=new Select(selectColor);
-            select.selectByIndex(0);
-            select.selectByIndex(1);
-            select.selectByIndex(2);
-        WebElement getFirstSelected=select.getFirstSelectedOption();
+        WebElement selectColor = driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select = new Select(selectColor);
+        select.selectByIndex(0);
+        select.selectByIndex(1);
+        select.selectByIndex(2);
+        WebElement getFirstSelected = select.getFirstSelectedOption();
         getFirstSelected.click();
-        WebElement getFirstSelect=driver.findElement(By.xpath("//button[@id='button-first']"));
+        WebElement getFirstSelect = driver.findElement(By.xpath("//button[@id='button-first']"));
         getFirstSelect.click();
-        WebElement firstSelectedColor=driver.findElement(By.xpath("//div[@id='message-two']"));
+        WebElement firstSelectedColor = driver.findElement(By.xpath("//div[@id='message-two']"));
         System.out.println(firstSelectedColor.getText());
-       String actualFirstSelected=firstSelectedColor.getText();
-       String expectedFirstSelected="First selected color is : Red";
-       Assert.assertEquals(actualFirstSelected,expectedFirstSelected,"First Selection is not done");
+        String actualFirstSelected = firstSelectedColor.getText();
+        String expectedFirstSelected = "First selected color is : Red";
+        Assert.assertEquals(actualFirstSelected, expectedFirstSelected, "First Selection is not done");
     }
+
     @Test
     public void getDeselected() throws InterruptedException {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
-        WebElement selectColor=driver.findElement(By.xpath("//select[@id='multi-select-field']"));
-        Select select=new Select(selectColor);
+        WebElement selectColor = driver.findElement(By.xpath("//select[@id='multi-select-field']"));
+        Select select = new Select(selectColor);
         select.selectByIndex(0);
         select.selectByIndex(1);
         select.selectByIndex(2);
         Thread.sleep(3000);
         select.deselectByIndex(0);
         select.deselectByValue("Yellow");
-        select.deselectByVisibleText("Green");
+        //select.deselectByVisibleText("Green");
         //select.deselectAll();
+        WebElement allSelector = driver.findElement(By.xpath("//button[@id='button-all']"));
+        allSelector.click();
     }
+
     @Test
-    public void verifyColorOptions(){
+    public void verifyColorOptions() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
-        colorOption("Red","Yellow","Green");
-        }
-    public void colorOption(String color1,String color2,String color3){
-        WebElement colorOptions=driver.findElement(By.xpath("//select[@id='single-input-field']"));
-        Select select=new Select(colorOptions);
-        List <WebElement> colorList=select.getOptions();
-        for(int i=0;i<colorList.size();i++) {
-            if (colorList.get(i).getText().equals(color1)) {
-                System.out.println("Red");
-            } else if (colorList.get(i).getText().equals(color2)) {
-                System.out.println("Yellow");
-            } else if (colorList.get(i).getText().equals(color3)) {
-                System.out.println("Green");
-            }else{
-                System.out.println("invalid");
+        colorOption("Yellow", "Red", "Green");
+        WebElement color45 = driver.findElement(By.xpath("//div[@id='message-one']"));
+        String actualColor = color45.getText();
+        System.out.println(color45.getText());
+        String expectedColor = "Selected Color : Green";
+        Assert.assertEquals(actualColor, expectedColor, "Color not found");
+    }
+
+    public void colorOption(String color1, String color2, String color3) {
+        WebElement colorOptions = driver.findElement(By.xpath("//select[@id='single-input-field']"));
+        Select select = new Select(colorOptions);
+        List<WebElement> colorList = select.getOptions();
+        for (int i = 0; i < colorList.size(); i++) {
+            if (colorList.get(i).getText().equals(color1) ||
+                    (colorList.get(i).getText().equals(color2)) || colorList.get(i).getText().equals(color3)) {
+                colorList.get(i).click();
             }
         }
     }
 
+    @Test
+    public void verifyRightClick() {
+        driver.get("https://demo.guru99.com/test/simple_context_menu.html");
+        WebElement rightClickMe = driver.findElement(By.xpath("//span[@class='context-menu-one btn btn-neutral']"));
+        Actions action = new Actions(driver);
+        action.contextClick(rightClickMe).build().perform();
+    }
+
+    @Test
+    public void verifyDoubleClick() throws InterruptedException {
+        driver.get("https://demo.guru99.com/test/simple_context_menu.html");
+        WebElement doubleClickMe = driver.findElement(By.xpath(" //button[@ondblclick='myFunction()']"));
+        Actions action = new Actions(driver);
+        action.doubleClick(doubleClickMe).build().perform();
+        Alert alert = driver.switchTo().alert();
+        String alertText = alert.getText();
+        System.out.println(alertText);
+        Thread.sleep(3000);
+        alert.accept();
+    }
+
+    @Test
+    public void verifyMouseOver() {
+        driver.get("https://demoqa.com/menu");
+        List<WebElement> menuList1 = driver.findElements(By.xpath("//ul[@id='nav']//a"));
+        selectMainMenu("Main Item 2", "SUB SUB LIST", menuList1);
+    }
+    public void selectMainMenu(String menuItem, String subMenu, List<WebElement> menuList) {
+        //List<WebElement> menuList = driver.findElements(By.xpath("//ul[@id='nav']//a"));
+        for (int i = 0; i < menuList.size(); i++) {
+            if (menuList.get(i).getText().equals(menuItem)) {
+                Actions action = new Actions(driver);
+                //action.moveByOffset(100, 120).build().perform();
+                action.moveToElement(menuList.get(i)).build().perform();
+            }
+        }
+    }
+    public void selectSubMenu(String subMenu, List<WebElement> menuList1) {
+        for (int i = 0; i < menuList1.size(); i++) {
+            String value = menuList1.get(i).getText();
+            if (menuList1.get(i).getText().equals(subMenu)) {
+                Actions action = new Actions(driver);
+                action.moveToElement(menuList1.get(i)).build().perform();
+            }
+        }
+    }
+    @Test
+    public void verifyDemoTourMouseOver(){
+        driver.get("https://demo.guru99.com/test/newtours/");
+        //tr[@class='mouseOut']//td//a
+        List<WebElement> menuListTour=driver.findElements(By.xpath("//tr[@class='mouseOut']//td//a"));
+      selectList(menuListTour,"Flights");
+    }
+    public void selectList(List<WebElement> menuListTour,String menu){
+        for(int i=0;i< menuListTour.size();i++){
+            if(menuListTour.get(i).getText().equals(menu)){
+                Actions action=new Actions(driver);
+                action.moveToElement(menuListTour.get(i)).build().perform();
+                //action.moveToElement(menuListTour.get(i),100,100).build().perform();
+            }
+        }
+    }
 }
+
+
+
+
+
+
 
