@@ -1,5 +1,7 @@
 package org.obs.seleniumcommands;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+import obs.selenium.ExcelUtility;
 import obs.selenium.Utility;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,6 +17,7 @@ import org.testng.annotations.Test;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.*;
 
 public class SeleniumCommands {
@@ -22,13 +25,16 @@ public class SeleniumCommands {
 
     public void testInitialize(String browser) {
         if (browser.equals("chrome")) {
-            System.setProperty("webdriver.chrome.driver", "C:\\Users\\Lenovo\\Downloads\\chromedriver_win32 (2)\\chromedriver.exe");
+            WebDriverManager.chromedriver().setup();
+            //System.setProperty("webdriver.chrome.driver", "C:\\Users\\Lenovo\\Downloads\\chromedriver_win32 (2)\\chromedriver.exe");
             driver = new ChromeDriver();
         } else if (browser.equals("firefox")) {
-            System.setProperty("webdriver.gecko.driver", "C:\\Selenium_files\\geckodriver-v0.30.0-win64\\geckodriver.exe");
+            WebDriverManager.firefoxdriver().setup();
+            //System.setProperty("webdriver.gecko.driver", "C:\\Selenium_files\\geckodriver-v0.30.0-win64\\geckodriver.exe");
             driver = new FirefoxDriver();
         } else if (browser.equals("edge")) {
-            System.setProperty("webdriver.edge.driver", "C:\\Selenium_files\\edgedriver_win64\\msedgedriver.exe");
+            WebDriverManager.edgedriver().setup();
+            //System.setProperty("webdriver.edge.driver", "C:\\Selenium_files\\edgedriver_win64\\msedgedriver.exe");
             driver = new EdgeDriver();
         } else {
             try {
@@ -60,14 +66,17 @@ public class SeleniumCommands {
     }
 
     @Test
-    public void verifyLogin() {
+    public void verifyLogin() throws IOException {
         driver.get("http://demowebshop.tricentis.com");
         WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        WebElement email = driver.findElement(By.cssSelector("input#Email"));
-        email.sendKeys("suryasomaraj94@gmail.com");
+        ExcelUtility excelEmailId=new ExcelUtility();
+        String UserName=excelEmailId.readLoginEmail(1,0);
+        WebElement loginEmail = driver.findElement(By.cssSelector("input#Email"));
+        loginEmail.sendKeys(UserName);
+        String loginPassword=ExcelUtility.readLoginPassword(1,1);
         WebElement password = driver.findElement(By.cssSelector("input.password"));
-        password.sendKeys("qwerty@123");
+        password.sendKeys(loginPassword);
         WebElement checkbox = driver.findElement(By.cssSelector("input[type='checkbox']"));
         checkbox.click();
         WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
@@ -361,13 +370,11 @@ public class SeleniumCommands {
         for (int i = 0; i < option.size(); i++) {
             if (option.get(i).getText().equals(color1)) {
                 select.selectByVisibleText(color1);
-                Actions action=new Actions(driver);
-                action.clickAndHold();
             } else if (option.get(i).getText().equals(color2)) {
                 select.selectByVisibleText(color2);
             }
         }
-        List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
+       List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
         for (int x = 0; x < allSelectedOptions.size(); x++) {
             System.out.println("all selected= " + allSelectedOptions.get(x).getText());
             WebElement getFirstSelected = select.getFirstSelectedOption();
@@ -466,8 +473,8 @@ public class SeleniumCommands {
         for (int i = 0; i < menuList.size(); i++) {
             if (menuList.get(i).getText().equals(menuItem)) {
                 Actions action = new Actions(driver);
-                //action.moveByOffset(100, 120).build().perform();
-                action.moveToElement(menuList.get(i)).build().perform();
+                action.moveByOffset(100, 120).build().perform();
+                //action.moveToElement(menuList.get(i)).build().perform();
             }
         }
     }
@@ -481,21 +488,69 @@ public class SeleniumCommands {
         }
     }
     @Test
-    public void verifyDemoTourMouseOver(){
+    public void verifyDemoTourMouseOver() {
         driver.get("https://demo.guru99.com/test/newtours/");
-        //tr[@class='mouseOut']//td//a
-        List<WebElement> menuListTour=driver.findElements(By.xpath("//tr[@class='mouseOut']//td//a"));
-      selectList(menuListTour,"Flights");
+        List<WebElement> menuListTour = driver.findElements(By.xpath("//tr[@class='mouseOut']//td//a"));
+        selectList(menuListTour, "Flights");
     }
-    public void selectList(List<WebElement> menuListTour,String menu){
-        for(int i=0;i< menuListTour.size();i++){
-            if(menuListTour.get(i).getText().equals(menu)){
-                Actions action=new Actions(driver);
+    public void selectList(List<WebElement> menuListTour, String menu) {
+        for (int i = 0; i < menuListTour.size(); i++) {
+            if (menuListTour.get(i).getText().equals(menu)) {
+                Actions action = new Actions(driver);
                 action.moveToElement(menuListTour.get(i)).build().perform();
                 //action.moveToElement(menuListTour.get(i),100,100).build().perform();
             }
         }
     }
+    @Test
+    public void verifyDragAndDrop(){
+        driver.get("https://demoqa.com/droppable");
+        WebElement drag=driver.findElement(By.xpath("//div[@id='draggable']"));
+        WebElement drop=driver.findElement(By.xpath("//div[@id='droppable']"));
+        Actions action = new Actions(driver);
+        action.dragAndDrop(drag,drop).build().perform();
+    }
+   @Test
+   public void dragAndDropBy(){
+        driver.get("https://demoqa.com/dragabble");
+        WebElement dradMe=driver.findElement(By.xpath("//div[@id='dragBox']"));
+        Actions action=new Actions(driver);
+        action.dragAndDropBy(dradMe,200,200);
+   }
+   @Test
+    public void verifyKeyBoardAction(){
+        driver.get("https://demoqa.com/text-box");
+        WebElement fullName=driver.findElement(By.xpath("//input[@id='userName']"));
+        fullName.sendKeys("Surya Somaraj");
+        Utility utility = new Utility();
+        String mail = Utility.random();
+        WebElement userEmail=driver.findElement(By.xpath("//input[@id='userEmail']"));
+        userEmail.sendKeys(mail);
+        WebElement currentAddress=driver.findElement(By.xpath("//textarea[@id='currentAddress']"));
+        currentAddress.sendKeys("43,Aswathy,tvm");
+        Actions action=new Actions(driver);
+        /**select the current address**/
+        action.keyDown(Keys.CONTROL).sendKeys("A").keyUp(Keys.CONTROL).build().perform();
+        /**copy the current address**/
+       action.keyDown(Keys.CONTROL).sendKeys("C").keyUp(Keys.CONTROL).build().perform();
+       /**to press Tab key to switch the tab to permanent address**/
+       action.sendKeys(Keys.TAB).build().perform();
+       /**Pasting address**/
+       action.keyDown(Keys.CONTROL).sendKeys("V").keyUp(Keys.CONTROL).build().perform();
+    }
+    @Test
+    public void verifyFileUpload(){
+        driver.get("https://demo.guru99.com/test/upload/");
+        WebElement chooseFile=driver.findElement(By.xpath("//input[@id='uploadfile_0']"));
+        WebElement terms=driver.findElement(By.xpath("//input[@id='terms']"));
+        WebElement submitButton=driver.findElement(By.xpath("//button[@id='submitbutton']"));
+        chooseFile.sendKeys("C:\\Selenium_files\\Sample.txt");
+        terms.click();
+        submitButton.click();
+
+    }
+
+
 }
 
 
