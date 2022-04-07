@@ -3,22 +3,36 @@ package org.obs.seleniumcommands;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import obs.selenium.ExcelUtility;
 import obs.selenium.Utility;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.ITest;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SeleniumCommands {
     WebDriver driver;
@@ -53,8 +67,13 @@ public class SeleniumCommands {
     }
 
     @AfterMethod
-    public void tearDown() {
-        //driver.close();
+    public void tearDown(ITestResult result) throws IOException {
+        if(ITestResult.FAILURE==result.getStatus()) {
+            TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
+            File screenshot = takesScreenshot.getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(screenshot, new File("./Screenshots/" + result.getName() + ".png"));
+        }
+        driver.close();
     }
 
     @Test
@@ -64,21 +83,57 @@ public class SeleniumCommands {
         String expectedTitle = "Demo Web Shop";
         Assert.assertEquals(actualTitle, expectedTitle, "invalid Page Title");
     }
-
+    @Test
+    public void verifyNavigationCommands(){
+        driver.navigate().to("http://demowebshop.tricentis.com/login");
+        //driver.navigate().back();
+        // driver.navigate().forward();
+        driver.navigate().refresh();
+    }
+    @Test
+    public void verifyPageSource(){
+        String actualTitle=driver.getTitle();
+        System.out.println(actualTitle);
+        String currentUrl=driver.getCurrentUrl();
+        System.out.println(currentUrl);
+        String getPageSource=driver.getPageSource();
+        System.out.println(getPageSource); //source code
+    }
+    @Test
+    public void verifyLocatorCommands(){
+        WebElement email=driver.findElement(By.id("Email123"));
+        WebElement email1=driver.findElement(By.name("Email"));
+        WebElement email2=driver.findElement(By.className("email"));
+        WebElement email3=driver.findElement(By.xpath("//*[@id=\"Email\"]"));
+        WebElement email4=driver.findElement(By.linkText("login"));
+        WebElement email5=driver.findElement(By.partialLinkText("log"));
+        WebElement email6=driver.findElement(By.cssSelector("#Email"));
+        email6.sendKeys("suryasomaraj94@gmail.com");
+        List<WebElement> tag =driver.findElements(By.tagName("a"));
+        //List<WebElement> tag =driver.findElements(By.tagName("123"));
+        int size=tag.size();
+        System.out.println(size);
+    }
     @Test
     public void verifyLogin() throws IOException {
         driver.get("http://demowebshop.tricentis.com");
+       // driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20)); //pageLoadWait
         WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        ExcelUtility excelEmailId=new ExcelUtility();
-        String UserName=excelEmailId.readLoginEmail(1,0);
+        ExcelUtility excel=new ExcelUtility();
+        List<String> data=excel.readDataFromExcel("\\src\\main\\resources\\TestData.xlsx","Login");
         WebElement loginEmail = driver.findElement(By.cssSelector("input#Email"));
-        loginEmail.sendKeys(UserName);
-        String loginPassword=ExcelUtility.readLoginPassword(1,1);
+        System.out.println(data);
+        loginEmail.sendKeys(data.get(2));
         WebElement password = driver.findElement(By.cssSelector("input.password"));
-        password.sendKeys(loginPassword);
+        password.sendKeys(data.get(3));
         WebElement checkbox = driver.findElement(By.cssSelector("input[type='checkbox']"));
         checkbox.click();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));//implicit
+        WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(20));//explicit
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[value='Log in']")));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
         submit.click();
         WebElement account = driver.findElement(By.xpath("//div[@class='header-links']//a[@class='account']"));
@@ -513,9 +568,9 @@ public class SeleniumCommands {
    @Test
    public void dragAndDropBy(){
         driver.get("https://demoqa.com/dragabble");
-        WebElement dradMe=driver.findElement(By.xpath("//div[@id='dragBox']"));
+        WebElement dragMe=driver.findElement(By.xpath("//div[@id='dragBox']"));
         Actions action=new Actions(driver);
-        action.dragAndDropBy(dradMe,200,200);
+        action.dragAndDropBy(dragMe,200,200);
    }
    @Test
     public void verifyKeyBoardAction(){
@@ -547,9 +602,38 @@ public class SeleniumCommands {
         chooseFile.sendKeys("C:\\Selenium_files\\Sample.txt");
         terms.click();
         submitButton.click();
-
     }
-
+    @Test
+    public void fileUploadUsingRobotClass() throws AWTException {
+        driver.get("https://www.monsterindia.com/seeker/registration");
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20));
+        WebElement chooseFile=driver.findElement(By.xpath("//span[text()='Choose CV']"));
+        chooseFile.click();
+        StringSelection S=new StringSelection("C:\\Selenium_files\\Sample.txt");
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(S,null);
+        Robot robot=new Robot();
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+    }
+    @Test
+    public void verifyJavaScriptExecutor(){
+        driver.get("http://demowebshop.tricentis.com/");
+        JavascriptExecutor js=(JavascriptExecutor)driver;
+        js.executeScript("document.getElementById('newsletter-email').value='suryasoma@gmi.com'");
+        js.executeScript("document.getElementById('newsletter-subscribe-button').click()");
+    }
+    @Test
+    public void verifyScroll(){
+        driver.get("https://demo.guru99.com/test/guru99home/");
+        JavascriptExecutor jse=(JavascriptExecutor)driver;
+        jse.executeScript("window.scrollBy(0,1000)");
+    }
 
 }
 
