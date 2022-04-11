@@ -2,6 +2,7 @@ package org.obs.seleniumcommands;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import obs.selenium.ExcelUtility;
+import obs.selenium.TableUtility;
 import obs.selenium.Utility;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
@@ -15,24 +16,19 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.ITest;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class SeleniumCommands {
     WebDriver driver;
@@ -68,7 +64,7 @@ public class SeleniumCommands {
 
     @AfterMethod
     public void tearDown(ITestResult result) throws IOException {
-        if(ITestResult.FAILURE==result.getStatus()) {
+        if (ITestResult.FAILURE == result.getStatus()) {
             TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
             File screenshot = takesScreenshot.getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(screenshot, new File("./Screenshots/" + result.getName() + ".png"));
@@ -83,46 +79,50 @@ public class SeleniumCommands {
         String expectedTitle = "Demo Web Shop";
         Assert.assertEquals(actualTitle, expectedTitle, "invalid Page Title");
     }
+
     @Test
-    public void verifyNavigationCommands(){
+    public void verifyNavigationCommands() {
         driver.navigate().to("http://demowebshop.tricentis.com/login");
         //driver.navigate().back();
         // driver.navigate().forward();
         driver.navigate().refresh();
     }
+
     @Test
-    public void verifyPageSource(){
-        String actualTitle=driver.getTitle();
+    public void verifyPageSource() {
+        String actualTitle = driver.getTitle();
         System.out.println(actualTitle);
-        String currentUrl=driver.getCurrentUrl();
+        String currentUrl = driver.getCurrentUrl();
         System.out.println(currentUrl);
-        String getPageSource=driver.getPageSource();
+        String getPageSource = driver.getPageSource();
         System.out.println(getPageSource); //source code
     }
+
     @Test
-    public void verifyLocatorCommands(){
-        WebElement email=driver.findElement(By.id("Email123"));
-        WebElement email1=driver.findElement(By.name("Email"));
-        WebElement email2=driver.findElement(By.className("email"));
-        WebElement email3=driver.findElement(By.xpath("//*[@id=\"Email\"]"));
-        WebElement email4=driver.findElement(By.linkText("login"));
-        WebElement email5=driver.findElement(By.partialLinkText("log"));
-        WebElement email6=driver.findElement(By.cssSelector("#Email"));
+    public void verifyLocatorCommands() {
+        WebElement email = driver.findElement(By.id("Email123"));
+        WebElement email1 = driver.findElement(By.name("Email"));
+        WebElement email2 = driver.findElement(By.className("email"));
+        WebElement email3 = driver.findElement(By.xpath("//*[@id=\"Email\"]"));
+        WebElement email4 = driver.findElement(By.linkText("login"));
+        WebElement email5 = driver.findElement(By.partialLinkText("log"));
+        WebElement email6 = driver.findElement(By.cssSelector("#Email"));
         email6.sendKeys("suryasomaraj94@gmail.com");
-        List<WebElement> tag =driver.findElements(By.tagName("a"));
+        List<WebElement> tag = driver.findElements(By.tagName("a"));
         //List<WebElement> tag =driver.findElements(By.tagName("123"));
-        int size=tag.size();
+        int size = tag.size();
         System.out.println(size);
     }
+
     @Test
     public void verifyLogin() throws IOException {
         driver.get("http://demowebshop.tricentis.com");
-       // driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+        // driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20)); //pageLoadWait
         WebElement login = driver.findElement(By.cssSelector("li>a.ico-login"));
         login.click();
-        ExcelUtility excel=new ExcelUtility();
-        List<String> data=excel.readDataFromExcel("\\src\\main\\resources\\TestData.xlsx","Login");
+        ExcelUtility excel = new ExcelUtility();
+        List<String> data = excel.readDataFromExcel("\\src\\main\\resources\\TestData.xlsx", "Login");
         WebElement loginEmail = driver.findElement(By.cssSelector("input#Email"));
         System.out.println(data);
         loginEmail.sendKeys(data.get(2));
@@ -130,8 +130,8 @@ public class SeleniumCommands {
         password.sendKeys(data.get(3));
         WebElement checkbox = driver.findElement(By.cssSelector("input[type='checkbox']"));
         checkbox.click();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));//implicit
-        WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(20));//explicit
+        //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));//implicit
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));//explicit
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[value='Log in']")));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         WebElement submit = driver.findElement(By.cssSelector("input[value='Log in']"));
@@ -396,6 +396,7 @@ public class SeleniumCommands {
         String expectedColorSelected = "Selected Color : Red";
         Assert.assertEquals(actualColorSelected, expectedColorSelected, "Color is not Selected");
     }
+
     public void selectColor(String color) {
         WebElement options = driver.findElement(By.xpath("//select[@id='single-input-field']"));
         Select select = new Select(options);
@@ -407,6 +408,7 @@ public class SeleniumCommands {
             }
         }
     }
+
     @Test
     public void multiSelectedColors() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
@@ -418,6 +420,7 @@ public class SeleniumCommands {
         String expectedAllSelectedColor = "All selected colors are : Red,Green";
         //Assert.assertEquals(actualAllSelectedColor,expectedAllSelectedColor,"Colors not selected");
     }
+
     public void selectMultipleColor(String color1, String color2) {
         WebElement selectColor = driver.findElement(By.xpath("//select[@id='multi-select-field']"));
         Select select = new Select(selectColor);
@@ -429,7 +432,7 @@ public class SeleniumCommands {
                 select.selectByVisibleText(color2);
             }
         }
-       List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
+        List<WebElement> allSelectedOptions = select.getAllSelectedOptions();
         for (int x = 0; x < allSelectedOptions.size(); x++) {
             System.out.println("all selected= " + allSelectedOptions.get(x).getText());
             WebElement getFirstSelected = select.getFirstSelectedOption();
@@ -437,6 +440,7 @@ public class SeleniumCommands {
             allSelectedOptions.get(x).click();
         }
     }
+
     @Test
     public void verifyFirstSelectedColor() {
         driver.get("https://selenium.obsqurazone.com/select-input.php");
@@ -523,6 +527,7 @@ public class SeleniumCommands {
         List<WebElement> menuList1 = driver.findElements(By.xpath("//ul[@id='nav']//a"));
         selectMainMenu("Main Item 2", "SUB SUB LIST", menuList1);
     }
+
     public void selectMainMenu(String menuItem, String subMenu, List<WebElement> menuList) {
         //List<WebElement> menuList = driver.findElements(By.xpath("//ul[@id='nav']//a"));
         for (int i = 0; i < menuList.size(); i++) {
@@ -533,6 +538,7 @@ public class SeleniumCommands {
             }
         }
     }
+
     public void selectSubMenu(String subMenu, List<WebElement> menuList1) {
         for (int i = 0; i < menuList1.size(); i++) {
             String value = menuList1.get(i).getText();
@@ -542,12 +548,14 @@ public class SeleniumCommands {
             }
         }
     }
+
     @Test
     public void verifyDemoTourMouseOver() {
         driver.get("https://demo.guru99.com/test/newtours/");
         List<WebElement> menuListTour = driver.findElements(By.xpath("//tr[@class='mouseOut']//td//a"));
         selectList(menuListTour, "Flights");
     }
+
     public void selectList(List<WebElement> menuListTour, String menu) {
         for (int i = 0; i < menuListTour.size(); i++) {
             if (menuListTour.get(i).getText().equals(menu)) {
@@ -557,61 +565,66 @@ public class SeleniumCommands {
             }
         }
     }
+
     @Test
-    public void verifyDragAndDrop(){
+    public void verifyDragAndDrop() {
         driver.get("https://demoqa.com/droppable");
-        WebElement drag=driver.findElement(By.xpath("//div[@id='draggable']"));
-        WebElement drop=driver.findElement(By.xpath("//div[@id='droppable']"));
+        WebElement drag = driver.findElement(By.xpath("//div[@id='draggable']"));
+        WebElement drop = driver.findElement(By.xpath("//div[@id='droppable']"));
         Actions action = new Actions(driver);
-        action.dragAndDrop(drag,drop).build().perform();
+        action.dragAndDrop(drag, drop).build().perform();
     }
-   @Test
-   public void dragAndDropBy(){
+
+    @Test
+    public void dragAndDropBy() {
         driver.get("https://demoqa.com/dragabble");
-        WebElement dragMe=driver.findElement(By.xpath("//div[@id='dragBox']"));
-        Actions action=new Actions(driver);
-        action.dragAndDropBy(dragMe,200,200);
-   }
-   @Test
-    public void verifyKeyBoardAction(){
+        WebElement dragMe = driver.findElement(By.xpath("//div[@id='dragBox']"));
+        Actions action = new Actions(driver);
+        action.dragAndDropBy(dragMe, 200, 200);
+    }
+
+    @Test
+    public void verifyKeyBoardAction() {
         driver.get("https://demoqa.com/text-box");
-        WebElement fullName=driver.findElement(By.xpath("//input[@id='userName']"));
+        WebElement fullName = driver.findElement(By.xpath("//input[@id='userName']"));
         fullName.sendKeys("Surya Somaraj");
         Utility utility = new Utility();
         String mail = Utility.random();
-        WebElement userEmail=driver.findElement(By.xpath("//input[@id='userEmail']"));
+        WebElement userEmail = driver.findElement(By.xpath("//input[@id='userEmail']"));
         userEmail.sendKeys(mail);
-        WebElement currentAddress=driver.findElement(By.xpath("//textarea[@id='currentAddress']"));
+        WebElement currentAddress = driver.findElement(By.xpath("//textarea[@id='currentAddress']"));
         currentAddress.sendKeys("43,Aswathy,tvm");
-        Actions action=new Actions(driver);
+        Actions action = new Actions(driver);
         /**select the current address**/
         action.keyDown(Keys.CONTROL).sendKeys("A").keyUp(Keys.CONTROL).build().perform();
         /**copy the current address**/
-       action.keyDown(Keys.CONTROL).sendKeys("C").keyUp(Keys.CONTROL).build().perform();
-       /**to press Tab key to switch the tab to permanent address**/
-       action.sendKeys(Keys.TAB).build().perform();
-       /**Pasting address**/
-       action.keyDown(Keys.CONTROL).sendKeys("V").keyUp(Keys.CONTROL).build().perform();
+        action.keyDown(Keys.CONTROL).sendKeys("C").keyUp(Keys.CONTROL).build().perform();
+        /**to press Tab key to switch the tab to permanent address**/
+        action.sendKeys(Keys.TAB).build().perform();
+        /**Pasting address**/
+        action.keyDown(Keys.CONTROL).sendKeys("V").keyUp(Keys.CONTROL).build().perform();
     }
+
     @Test
-    public void verifyFileUpload(){
+    public void verifyFileUpload() {
         driver.get("https://demo.guru99.com/test/upload/");
-        WebElement chooseFile=driver.findElement(By.xpath("//input[@id='uploadfile_0']"));
-        WebElement terms=driver.findElement(By.xpath("//input[@id='terms']"));
-        WebElement submitButton=driver.findElement(By.xpath("//button[@id='submitbutton']"));
+        WebElement chooseFile = driver.findElement(By.xpath("//input[@id='uploadfile_0']"));
+        WebElement terms = driver.findElement(By.xpath("//input[@id='terms']"));
+        WebElement submitButton = driver.findElement(By.xpath("//button[@id='submitbutton']"));
         chooseFile.sendKeys("C:\\Selenium_files\\Sample.txt");
         terms.click();
         submitButton.click();
     }
+
     @Test
     public void fileUploadUsingRobotClass() throws AWTException {
         driver.get("https://www.monsterindia.com/seeker/registration");
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20));
-        WebElement chooseFile=driver.findElement(By.xpath("//span[text()='Choose CV']"));
+        WebElement chooseFile = driver.findElement(By.xpath("//span[text()='Choose CV']"));
         chooseFile.click();
-        StringSelection S=new StringSelection("C:\\Selenium_files\\Sample.txt");
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(S,null);
-        Robot robot=new Robot();
+        StringSelection S = new StringSelection("C:\\Selenium_files\\Sample.txt");
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(S, null);
+        Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
         robot.keyPress(KeyEvent.VK_CONTROL);
@@ -621,23 +634,100 @@ public class SeleniumCommands {
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
+
     @Test
-    public void verifyJavaScriptExecutor(){
+    public void verifyJavaScriptExecutor() {
         driver.get("http://demowebshop.tricentis.com/");
-        JavascriptExecutor js=(JavascriptExecutor)driver;
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("document.getElementById('newsletter-email').value='suryasoma@gmi.com'");
         js.executeScript("document.getElementById('newsletter-subscribe-button').click()");
     }
+
     @Test
-    public void verifyScroll(){
+    public void verifyScroll() {
         driver.get("https://demo.guru99.com/test/guru99home/");
-        JavascriptExecutor jse=(JavascriptExecutor)driver;
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("window.scrollBy(0,1000)");
     }
 
+    @Test
+    public void verifyTablesHeaders() {
+        driver.get("https://www.w3schools.com/html/html_tables.asp");
+        List<WebElement> heading = driver.findElements(By.xpath("//table[@id='customers']//th"));
+        List<String> actualList = new ArrayList<>();
+        for (WebElement i : heading) {
+            actualList.add(i.getText());
+        }
+        List<String> expectedList = new ArrayList<>();
+        expectedList.add("Company");
+        expectedList.add("Contact");
+        expectedList.add("Country");
+        Assert.assertEquals(actualList, expectedList, "List not matching");
+    }
+
+    @Test
+    public void verifyTableHeaders() {
+        driver.get("https://www.w3schools.com/html/html_tables.asp");
+        List<WebElement> header = driver.findElements(By.xpath("//table[@id='customers']//th"));
+        List<String> actual = new ArrayList<>();
+        for (int i = 0; i < header.size(); i++) {
+            actual.add(header.get(i).getText());
+        }
+        List<String> expected = new ArrayList<>();
+        expected.add("Company");
+        expected.add("Contact");
+        expected.add("Country");
+        Assert.assertEquals(actual, expected, "HeaderName Contact NotFound");
+    }
+
+    @Test
+    public void verifyValueInTable() {
+        driver.get("https://www.w3schools.com/html/html_tables.asp");
+        List<WebElement> rowElement = driver.findElements(By.xpath("//table[@id='customers']//tr"));
+        List<String> actualData = new ArrayList<>();
+        for (int i = 2; i < rowElement.size(); i++) {//indexing
+            List<WebElement> rowValues = driver.findElements(By.xpath("//table[@id='customers']//tr[" + i + "]//td"));
+            if (rowValues.get(0).getText().equals("Island Trading")) {
+                for (int j = 0; j < rowValues.size(); j++) {
+                    actualData.add(rowValues.get(j).getText());
+                }
+            }
+        }
+        List<String> expected = new ArrayList<>();
+        expected.add("Island Trading");
+        expected.add("Helen Bennett");
+        expected.add("UK");
+        Assert.assertEquals(actualData, expected, "Island Trading Not Found");
+    }
+
+    @Test
+    public void verifyExcelTable() throws IOException {
+        driver.get("https://www.w3schools.com/html/html_tables.asp");
+        List<WebElement> rowElement = driver.findElements(By.xpath("//table[@id='customers']//tr"));
+        List<String> actualData = new ArrayList<>();
+        for (int i = 2; i < rowElement.size(); i++) {//indexing
+            List<WebElement> rowValues = driver.findElements(By.xpath("//table[@id='customers']//tr[" + i + "]//td"));
+            for (int j = 0; j < rowValues.size(); j++) {
+                ExcelUtility excelUtility = new ExcelUtility();
+                String actual = rowValues.get(j).getText();
+                ArrayList<String[]> expected = excelUtility.readExcelTable("\\src\\main\\resources\\TestData.xlsx", "Table");
+                Assert.assertEquals(actual, expected, "Values not Equal");
+            }
+        }
+    }
+    @Test
+    public void  verifyDataFromExcel() throws IOException {
+        driver.get("https://www.w3schools.com/html/html_tables.asp");
+        ExcelUtility excelUtility = new ExcelUtility();
+        List<ArrayList<String>> expected = excelUtility.readDatasFromExcel("\\src\\main\\resources\\TestData.xlsx", "Table");
+       // System.out.println(expected);
+        List<WebElement> rowElement = driver.findElements(By.xpath("//table[@id='customers']//tr"));
+        List<WebElement> columnElement = driver.findElements(By.xpath("//table[@id='customers']//tr//td"));
+        TableUtility tableUtility=new TableUtility();
+        List<ArrayList<String>> actual =tableUtility.getGridData(rowElement,columnElement);
+        System.out.println(actual);
+    }
 }
-
-
 
 
 
