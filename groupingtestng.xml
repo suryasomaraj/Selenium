@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="GroupTest Suite">
+    <test name="Group Test">
+
+
+        <parameter name="browser" value="chrome"/>
+        <parameter name="url" value="http://demowebshop.tricentis.com/"/>
+        <groups>
+            <run>
+                <include name="sanity"></include>
+                <include name="smoke"></include>
+
+            </run>
+        </groups>
+
+        <classes>
+            <class name="org.obs.testingcommands.HomePageTest">
+                <methods>
+                    <include name="verifyHomepageTitle"/>
+                    <include name="searchButton"/>
+                </methods>
+
+            </class>
+        </classes>
+
+
+    </test>
+
+
+</suite>
