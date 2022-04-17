@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Regression suite">
+    <test name="Functional Test">
+        <classes>
+            <class name="org.obs.seleniumcommands.SeleniumCommands">
+                <methods>
+                    <include name="verifyHomepageTitle"/>
+                    <include name="verifyNavigationCommands"/>
+                    <include name="verifyPageSource"/>
+                    <include name="verifyLocatorCommands"/>
+                    <include name="verifyLogin"/>
+                    <include name="verifyClear"/>
+                    <include name="verifyWebelementCommands"/>
+                    <include name="searchButton"/>
+                    <include name="verifyRegistration"/>
+                    <include name="verifyElementPresent"/>
+                    <include name="verifyElementEnabled"/>
+                    <include name="verifyCheckBoxSelectionStatus"/>
+                    <include name="verifyPromptAlert"/>
+                    <include name="verifyDropDown"/>
+                    <include name="verifySimpleAlert"/>
+                    <include name="verifyConfirmationAlert"/>
+                    <include name="verifyDeleteCustomer"/>
+                    <include name="verifyMultipleWindows"/>
+                    <include name="verifyFramesInSelenium"/>
+                    <include name="verifySelectedColor"/>
+                    <include name="multiSelectedColors"/>
+                    <include name="verifyFirstSelectedColor"/>
+                    <include name="getDeselected"/>
+                    <include name="verifyColorOptions"/>
+                    <include name="verifyRightClick"/>
+                    <include name="verifyDoubleClick"/>
+                    <include name="verifyMouseOver"/>
+                    <include name="verifyDemoTourMouseOver"/>
+                    <include name="verifyDragAndDrop"/>
+                    <include name="dragAndDropBy"/>
+                    <include name="verifyKeyBoardAction"/>
+                    <include name="verifyFileUpload"/>
+                    <include name="fileUploadUsingRobotClass"/>
+                    <include name="verifyJavaScriptExecutor"/>
+                    <include name="verifyScroll"/>
+                    <include name="verifyTablesHeaders"/>
+                    <include name="verifyTableHeaders"/>
+                    <include name="verifyValueInTable"/>
+                    <include name="verifyDataFromExcel"/>
+                </methods>
+            </class>
+            <class name="org.obs.testingcommands.TestNg1">
+                <methods>
+                    <include name="testCaseMethod1"/>
+                    <include name="testCaseMethod2"/>
+                </methods>
+            </class>
+            <class name="org.obs.testingcommands.TestNg2">
+                <methods>
+                    <include name="testCaseMethod3"/>
+                    <include name="testCaseMethod4"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

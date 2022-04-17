@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Parameter Suite">
+    <test name="Parameter Test">
+        <parameter name="browser" value="chrome"/>
+        <parameter name="url" value="http://demowebshop.tricentis.com/"/>
+        <classes>
+            <class name="org.obs.testingcommands.HomePageTest">
+                <methods>
+                    <include name="verifyHomepageTitle"/>
+                    <include name="verifyLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
